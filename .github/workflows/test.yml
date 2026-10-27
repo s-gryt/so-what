@@ -15,12 +15,12 @@ jobs:
       run:
         shell: bash
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - run: bash skills/so-what/scripts/test.sh
   awk-variants:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - run: sudo apt-get update && sudo apt-get install -y mawk gawk
       - name: test with mawk
         run: AWK=mawk bash skills/so-what/scripts/test.sh
