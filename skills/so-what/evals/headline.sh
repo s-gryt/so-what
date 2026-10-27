@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Extract the headline view of one output: what a time-pressed reader sees.
+# Extract the headline view of one output: the part that carries the whole message.
 #   headline.sh <file>
 # Prints, in order, whichever exist:
 #   Title:       first non-blank line (HTML comment lines skipped); for a PR

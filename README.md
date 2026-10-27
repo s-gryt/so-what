@@ -1,90 +1,232 @@
 # so-what (`sw`)
 
-An agent skill that writes commit messages and pull request descriptions around
-**impact** (who notices, what behaves differently, what could break, how it was
-verified), with a short impact map and a decision line, instead of narrating the
-diff. It grounds the text in the real diff,
-sets a risk floor from the files touched, lints the result, and updates an
-existing PR description in place without touching hand-written notes.
+Commit messages and pull requests that tell the reviewer what matters.
 
-Works with Claude Code, Codex, GitHub Copilot, and Antigravity.
+Coding agents write fast, and they describe their work badly. A typical
+message lists the files that changed. The reviewer must then read the diff
+to learn who is affected and what can break.
+
+so-what makes your agent put three answers at the top:
+
+- **Impact:** who notices the change, and what is different for them.
+- **Risk:** the worst case, and what was checked.
+- **Decision:** what the reviewer must decide.
+
+The reviewer reads the first lines and knows enough to approve, push back,
+or escalate.
 
 ## Install
 
-### npx (all agents)
+The skill needs `git`, `bash`, `awk`, and the `gh` CLI for pull requests.
+Pick your agent.
 
-```bash
-npx github:s-gryt/so-what --agent all          # this project
-npx github:s-gryt/so-what -g -a claude,codex   # your user account
-npx github:s-gryt/so-what list                 # what is installed where
-```
-
-Without `--agent`, it installs for agents it detects in the target. Existing
-installs are kept unless you pass `--force`. `--dry-run` prints the plan.
-
-| Agent          | Skill (project)            | Skill (global)                      | Slash command                                                                 |
-| -------------- | -------------------------- | ----------------------------------- | ----------------------------------------------------------------------------- |
-| Claude Code    | `.claude/skills/`          | `~/.claude/skills/`                 | `/sw:commit`, `/sw:pr` (`.claude/commands/sw/`)|
-| Codex          | `.agents/skills/`          | `~/.agents/skills/`                 | `/prompts:sw-commit`, `/prompts:sw-pr` (global only, `~/.codex/prompts/`)                    |
-| GitHub Copilot | `.github/skills/`          | `~/.copilot/skills/`                | `sw-commit`, `sw-pr` prompt files (project only, `.github/prompts/`)                |
-| Antigravity    | `.agent/skills/`           | `~/.gemini/antigravity/skills/`     | `sw-commit`, `sw-pr` workflows (`.agent/workflows/`, global: `global_workflows/`)   |
-
-### Claude Code plugin
+<details>
+<summary><strong>Claude Code</strong></summary>
 
 ```text
 /plugin marketplace add s-gryt/so-what
 /plugin install sw@so-what
 ```
 
-### Skills CLI
-
-The skill lives at `skills/so-what/SKILL.md`, the layout the open
-`skills` CLI discovers:
+Or copy the files into your project:
 
 ```bash
-npx skills add s-gryt/so-what
+npx github:s-gryt/so-what -a claude
 ```
 
-### Manual
+Commands: `/sw:commit`, `/sw:pr`, `/sw:pr <number>`.
 
-Copy `skills/so-what/` into any agent's skills directory from the table.
+</details>
+
+<details>
+<summary><strong>Codex</strong></summary>
+
+```bash
+npx github:s-gryt/so-what -g -a codex
+```
+
+Commands: `/prompts:sw-commit`, `/prompts:sw-pr`.
+
+</details>
+
+<details>
+<summary><strong>GitHub Copilot</strong></summary>
+
+```bash
+npx github:s-gryt/so-what -a copilot
+```
+
+Prompts: `sw-commit`, `sw-pr`.
+
+</details>
+
+<details>
+<summary><strong>Gemini CLI</strong></summary>
+
+```bash
+gemini skills install https://github.com/s-gryt/so-what.git --path skills/so-what
+```
+
+Re-run the command to update.
+
+</details>
+
+<details>
+<summary><strong>Antigravity</strong></summary>
+
+```bash
+npx github:s-gryt/so-what -a antigravity
+```
+
+Workflows: `sw-commit`, `sw-pr`.
+
+</details>
+
+<details>
+<summary><strong>Any other agent</strong></summary>
+
+```bash
+npx skills@latest add s-gryt/so-what -a <agent>  # cursor, opencode, windsurf, amp; omit -a to choose
+```
+
+Or copy `skills/so-what/` into the skills directory of your agent.
+
+</details>
+
+<details>
+<summary><strong>Installer options and paths</strong></summary>
+
+```bash
+npx github:s-gryt/so-what --agent all          # every supported agent, this project
+npx github:s-gryt/so-what -g -a claude,codex   # your user account
+npx github:s-gryt/so-what list                 # what is installed where
+```
+
+`--force` overwrites existing installs. `--dry-run` lists each file it
+would write.
+
+| Agent          | Skill (project)   | Skill (global)                  | Slash command                                                             |
+| -------------- | ----------------- | ------------------------------- | ------------------------------------------------------------------------- |
+| Claude Code    | `.claude/skills/` | `~/.claude/skills/`             | `/sw:commit`, `/sw:pr` (`.claude/commands/sw/`)                           |
+| Codex          | `.agents/skills/` | `~/.agents/skills/`             | `/prompts:sw-commit`, `/prompts:sw-pr` (global only, `~/.codex/prompts/`) |
+| GitHub Copilot | `.github/skills/` | `~/.copilot/skills/`            | `sw-commit`, `sw-pr` prompt files (project only, `.github/prompts/`)      |
+| Antigravity    | `.agent/skills/`  | `~/.gemini/antigravity/skills/` | `sw-commit`, `sw-pr` workflows (`.agent/workflows/`, global: `global_workflows/`) |
+
+</details>
 
 ## Use
 
-Ask the agent for a commit message or PR description, or run `/sw:commit`,
-`/sw:pr`, or `/sw:pr <number>` (Codex, Copilot, Antigravity: `sw-commit`, `sw-pr`). The skill needs `git`, `bash`, `awk`,
-and (for pull requests) the `gh` CLI.
+Ask your agent for a commit or a pull request, or run the command for your
+agent from the list above.
 
-## Customize the risk map
+<details>
+<summary><strong>How it works</strong></summary>
 
-`skills/so-what/scripts/areas.tsv` maps paths to an area and a risk floor
-(first match wins, last row is a catch-all). Areas: agents, ci, data,
-infra, tests, docs, security, interface, flags, deps, source. Override per
-repo with `.so-what/areas.tsv` at the repo root or `SO_WHAT_AREAS=<file>`.
+```text
+  staged changes (commit) or branch against main (PR)
+                                  |
+                                  v
+  +------------------------------------------------------------------+
+  | 1. FACTS    facts.sh reads the diff and reports:                 |
+  |             - areas touched: ci, data, interface, ...            |
+  |             - protected invariants the change touches            |
+  |             - risk floor, set from the changed paths             |
+  |               (the author may rate risk higher)                  |
+  +------------------------------------------------------------------+
+                                  |
+                                  v
+  +------------------------------------------------------------------+
+  | 2. WRITE    the agent drafts the text from the facts:            |
+  |             - Impact: who is affected, what is different         |
+  |             - Worst case and Decision (medium, high risk)        |
+  |             - impact map                                         |
+  |             - Rollback (high risk)                               |
+  |             - Why, from you; marked (inferred) otherwise         |
+  |             - Verification: only the checks that ran             |
+  +------------------------------------------------------------------+
+                                  |
+                                  v
+  +------------------------------------------------------------------+
+  | 3. CHECK    the agent reads the headline view only and answers   |
+  |             three questions: what changed for whom, the worst    |
+  |             case, what to decide. An answer that needs more      |
+  |             text means rewrite.                                  |
+  +------------------------------------------------------------------+
+                                  |
+                                  v
+  +------------------------------------------------------------------+
+  | 4. LINT     lint.sh checks the text and the agent fixes          |
+  |             every finding: edit-verb openers, file names,        |
+  |             forced negatives, missing fields, bad maps           |
+  +------------------------------------------------------------------+
+                                  |
+                                  v
+  +------------------------------------------------------------------+
+  | 5. SHIP     commit:       git commit -F <file>                   |
+  |             new PR:       gh pr create --body-file <file>        |
+  |             existing PR:  upsert-pr.sh replaces the marked       |
+  |                           block and keeps hand-written notes     |
+  +------------------------------------------------------------------+
+```
 
-Name the architectural rules your repo protects in
-`.so-what/invariants.tsv` (or `SO_WHAT_INVARIANTS=<file>`): `path-regex`,
-`invariant`, `owner`, tab-separated. Touching a matching path lists the
-invariant and its owner, raises the floor to at least medium, and makes
-lint require the invariant's name in the Risk section. See
-`skills/so-what/references/invariants.example.tsv`.
+The headline view is the part a reviewer reads first:
 
-## Plan mode
+```text
+  commit                              pull request
+  +-------------------------------+   +--------------------------------+
+  | subject  (the outcome)        |   | title                          |
+  | Impact:  first sentence       |   | ## Impact   first sentence     |
+  | Risk:    worst case           |   | Worst case: ...                |
+  | Needs:   what to decide       |   | Decision:   ...                |
+  | [ASCII impact map]            |   | ## Impact map  (mermaid)       |
+  +-------------------------------+   | > Why, risk, verification      |
+                                      |   (folded)                     |
+                                      +--------------------------------+
+```
 
-Before a PR has code, the agent can write a short plan block (`## Plan`,
-expected risk, verification plan) with `upsert-pr.sh <n> <block> --kind
-plan`. The later recap adds `## Plan vs actual` and replaces it.
-`upsert-pr.sh <n> --show` prints the current block.
+Full examples, each one linted:
 
-## Develop
+- [A commit](skills/so-what/references/commit.md)
+- [A pull request block](skills/so-what/references/pull-request.md)
+- [Impact maps, ASCII and mermaid](skills/so-what/references/impact-map.md)
+- [A plan, written before the code exists](skills/so-what/references/plan.md)
+- [Ten graded cases, with traps](skills/so-what/evals/cases.md)
+- [Eval method and results](skills/so-what/evals/README.md)
+
+</details>
+
+<details>
+<summary><strong>Customize</strong></summary>
+
+**Risk map.** `skills/so-what/scripts/areas.tsv` maps paths to an area and a
+risk floor. The first match wins, and the last row catches everything else.
+Areas: agents, ci, data, infra, tests, docs, security, interface, flags, deps,
+source. Override it per repo with `.so-what/areas.tsv` at the repo root, or
+with `SO_WHAT_AREAS=<file>`.
+
+**Invariants.** Name the rules your repo protects in
+`.so-what/invariants.tsv` (or `SO_WHAT_INVARIANTS=<file>`). Each row holds
+`path-regex`, `invariant`, and `owner`, separated by tabs. A change to a
+matching path lists the invariant and its owner. It also raises the floor to
+medium, and lint then requires the invariant's name in Risk. See
+[`invariants.example.tsv`](skills/so-what/references/invariants.example.tsv).
+
+**Plan mode.** Before a PR has code, the agent can write a short plan block
+with `upsert-pr.sh <n> <block> --kind plan`. The block holds `## Plan`, the
+expected risk, and the verification plan. The later recap replaces it and
+adds `## Plan vs actual`. `upsert-pr.sh <n> --show` prints the current block.
+
+</details>
+
+<details>
+<summary><strong>Develop</strong></summary>
 
 ```bash
 bash skills/so-what/scripts/test.sh    # lint, upsert, and facts self-test
 node bin/cli.mjs --dir /tmp/demo --agent all --dry-run
 ```
 
-`skills/so-what/evals/` holds fixtures, scripts, and results of the model-graded eval.
+`skills/so-what/evals/` holds the fixtures, scripts, and results of the
+model-graded eval.
 
-## License
-
-[MIT](LICENSE) (http://opensource.org/license/MIT), Copyright (c) 2026 Sergii Grytsaienko.
+</details>

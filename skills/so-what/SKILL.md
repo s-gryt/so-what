@@ -12,10 +12,10 @@ can trust it.
 
 ## The headline view
 
-A senior architect or CTO with thirty seconds reads only the title or
-subject, the first sentence of Impact, `Worst case:`, `Decision:` (commit:
-`Needs:`), and the map. Before linting, read back only that view and answer
-each question in one line. If an answer needs the rest of the text, rewrite.
+The title or subject, the first sentence of Impact, `Worst case:`,
+`Decision:` (commit: `Needs:`), and the map carry the whole message. Before
+linting, read back only that view and answer each question in one line. If
+an answer needs the rest of the text, rewrite.
 
 1. What was wrong, and what is different for whom?
 2. What is the worst case?

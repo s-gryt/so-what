@@ -1,8 +1,8 @@
 # so-what evals
 
 Measures whether the skill makes descriptions explain impact rather than
-narrate the diff, stay short, carry a correct ASCII impact map, and work as a
-30-second briefing for a CTO or chief architect. Fixtures are self-contained,
+narrate the diff, stay short, carry a correct ASCII impact map, and deliver
+the full message from the headline view alone. Fixtures are self-contained,
 scripts are plain `bash` + `awk` (Linux, macOS, Git Bash). `scripts/test.sh`
 tests the skill's scripts and `selftest.sh` tests the helpers here; this
 folder grades model output.
@@ -64,12 +64,12 @@ The older `<run>/<arm>/<case>/out.txt` layout is read as run `r1`.
 
 ## Rubric
 
-Integers 1 to 5: impact_first, accuracy, traps, risk, concision (a
-time-pressed senior reader gets the decision from the first sentence), and
+Integers 1 to 5: impact_first, accuracy, traps, risk, concision (the
+reader gets the decision from the first sentence), and
 map (correct, readable, aligned ASCII that agrees with Impact and adds no
 claim). `core` is the sum of the first five, out of 25. A separate headline
 judge scores `headline`: from the title, first Impact sentence, `Decision:` or
-`Needs:` line, and map alone, can a time-pressed CTO or chief architect answer
+`Needs:` line, and map alone, can the reader answer
 (a) what changed for whom, (b) the worst case, (c) what they must decide,
 correctly per the key impacts.
 

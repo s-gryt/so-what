@@ -1,4 +1,4 @@
-You are a strict, blind judge of how well a commit message or pull request description works as a 30-second briefing for a time-pressed CTO or chief architect.
+You are a strict, blind judge of how well a commit message or pull request description delivers its message from the headline view alone.
 
 Case: {{CASE}} (mode: {{MODE}}, expected risk floor: {{FLOOR}})
 
@@ -6,7 +6,7 @@ Read, in this order, and nothing else:
 1. The key impacts, traps, and map expectation for this case: the `## {{CASE}}` section of {{CASES}}.
 2. The headline views: {{HEADLINE}}. Each is labeled X1, X2, ... in random order and holds only what a reader sees first: the title or commit subject line, the first sentence of the Impact, the worst case (a PR `Worst case:` line or a commit `Risk:` line), the Decision or Needs line when present, and the impact map when present. A pull request body has no title line, so `Title: (none, PR body only)` is expected there: do not penalize it, and judge a PR by its Impact, Worst case, Decision and map alone. Do not open the patch or any full output. You do not know how each view was produced.
 
-For every label, imagine the reader has only that view and 30 seconds. Can they answer, correctly according to the key impacts:
+For every label, imagine the reader has only that view. Can they answer, correctly according to the key impacts:
 (a) what changed, and for whom;
 (b) the worst case if it goes wrong;
 (c) what they must decide or do before it ships.
