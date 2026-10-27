@@ -31,7 +31,7 @@ Pick your agent.
 
 ```text
 /plugin marketplace add s-gryt/so-what
-/plugin install sw@so-what
+/plugin install sw@s-gryt
 ```
 
 Or copy the files into your project:
