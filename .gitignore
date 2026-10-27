@@ -1,0 +1,24 @@
+# Agent and tool session state
+.omc/
+.claude/
+.serena/
+
+# Dependencies and package output
+node_modules/
+*.tgz
+
+# Eval runs (generated outputs, blind keys, judge scores)
+skills/so-what/evals/runs/
+
+# Local environment and logs
+.env
+.env.*
+*.log
+
+# OS and editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+CLAUDE.local.md

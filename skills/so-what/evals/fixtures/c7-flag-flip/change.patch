@@ -1,0 +1,11 @@
+diff --git a/config/flags.json b/config/flags.json
+index cf8e44e..bcc3ba0 100644
+--- a/config/flags.json
++++ b/config/flags.json
+@@ -1,5 +1,5 @@
+ {
+-  "new_checkout": false,
++  "new_checkout": true,
+   "dark_mode": true,
+   "beta_search": false
+ }

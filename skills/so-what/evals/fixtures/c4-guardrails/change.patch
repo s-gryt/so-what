@@ -1,0 +1,94 @@
+diff --git a/.github/workflows/gates.yml b/.github/workflows/gates.yml
+new file mode 100644
+index 0000000..e783624
+--- /dev/null
++++ b/.github/workflows/gates.yml
+@@ -0,0 +1,11 @@
++name: gates
++on:
++  pull_request:
++    branches: [main]
++jobs:
++  gates:
++    runs-on: ubuntu-latest
++    steps:
++      - uses: actions/checkout@v4
++      - run: pip install pre-commit
++      - run: pre-commit run --all-files
+diff --git a/.pre-commit-config.yaml b/.pre-commit-config.yaml
+new file mode 100644
+index 0000000..16ff3bd
+--- /dev/null
++++ b/.pre-commit-config.yaml
+@@ -0,0 +1,12 @@
++repos:
++  - repo: local
++    hooks:
++      - id: no-comments
++        name: ban comments in code files
++        entry: bash tools/check-comments.sh
++        language: system
++      - id: docs-order
++        name: docs follow the reading order
++        entry: bash tools/check-docs-order.sh
++        language: system
++        files: ^docs/
+diff --git a/docs/ARCHITECTURE.md b/docs/ARCHITECTURE.md
+new file mode 100644
+index 0000000..c79bec1
+--- /dev/null
++++ b/docs/ARCHITECTURE.md
+@@ -0,0 +1 @@
++# Architecture
+diff --git a/docs/DOMAIN.md b/docs/DOMAIN.md
+new file mode 100644
+index 0000000..62a5028
+--- /dev/null
++++ b/docs/DOMAIN.md
+@@ -0,0 +1 @@
++# Domain
+diff --git a/docs/ENGINEERING.md b/docs/ENGINEERING.md
+new file mode 100644
+index 0000000..b3f0837
+--- /dev/null
++++ b/docs/ENGINEERING.md
+@@ -0,0 +1,4 @@
++# Engineering
++
++This set is the single authority for design facts.
++Reading order: Engineering, Domain, Architecture, Validation.
+diff --git a/docs/VALIDATION.md b/docs/VALIDATION.md
+new file mode 100644
+index 0000000..0e92a56
+--- /dev/null
++++ b/docs/VALIDATION.md
+@@ -0,0 +1 @@
++# Validation
+diff --git a/tools/check-comments.sh b/tools/check-comments.sh
+new file mode 100644
+index 0000000..4a26540
+--- /dev/null
++++ b/tools/check-comments.sh
+@@ -0,0 +1,11 @@
++#!/usr/bin/env bash
++set -euo pipefail
++for f in "$@"; do
++  case "$f" in
++    *.py) pattern='^[[:space:]]*#' ;;
++    *.js|*.ts) pattern='^[[:space:]]*//' ;;
++    *.md|*.yaml|*.yml) continue ;;
++    *) echo "unknown file type: $f"; exit 1 ;;
++  esac
++  if grep -Eq "$pattern" "$f"; then echo "comment found in $f"; exit 1; fi
++done
+diff --git a/tools/check-docs-order.sh b/tools/check-docs-order.sh
+new file mode 100644
+index 0000000..af1e535
+--- /dev/null
++++ b/tools/check-docs-order.sh
+@@ -0,0 +1,5 @@
++#!/usr/bin/env bash
++set -euo pipefail
++for n in ENGINEERING DOMAIN ARCHITECTURE VALIDATION; do
++  [ -f "docs/$n.md" ] || { echo "missing docs/$n.md"; exit 1; }
++done

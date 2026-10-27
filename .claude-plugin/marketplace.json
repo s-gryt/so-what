@@ -1,0 +1,11 @@
+{
+  "name": "so-what",
+  "owner": { "name": "Sergii Grytsaienko" },
+  "plugins": [
+    {
+      "name": "sw",
+      "source": "./",
+      "description": "Impact-first commit messages and pull request descriptions (/sw:commit, /sw:pr)."
+    }
+  ]
+}

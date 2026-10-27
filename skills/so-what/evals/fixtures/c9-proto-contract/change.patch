@@ -1,0 +1,13 @@
+diff --git a/proto/orders.proto b/proto/orders.proto
+index beec68a..fdc0110 100644
+--- a/proto/orders.proto
++++ b/proto/orders.proto
+@@ -4,6 +4,6 @@ package orders.v1;
+ message Order {
+   string id = 1;
+   string customer_id = 2;
+-  int64 total_cents = 3;
+-  reserved 4;
++  string total = 3;
++  string currency = 4;
+ }

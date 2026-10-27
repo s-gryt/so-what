@@ -1,0 +1,9 @@
+# Copy to .so-what/invariants.tsv at your repo root (or point
+# SO_WHAT_INVARIANTS at a file). Columns, tab-separated:
+#   path-regex <TAB> invariant <TAB> owner
+# Touching a matching path raises the risk floor to at least medium and
+# makes lint require the invariant's name in the Risk section.
+^src/billing/	invoices are never issued twice	payments-team
+^src/auth/session	a session token expires within 24 hours	security-team
+(^|/)migrations/	migrations run forward-only without downtime	data-platform
+^api/public/	published API fields are never removed in a minor release	api-owners

@@ -1,0 +1,14 @@
+diff --git a/db/migrations/002_drop_users_phone.sql b/db/migrations/002_drop_users_phone.sql
+new file mode 100644
+index 0000000..139f4de
+--- /dev/null
++++ b/db/migrations/002_drop_users_phone.sql
+@@ -0,0 +1 @@
++ALTER TABLE users DROP COLUMN phone;
+diff --git a/src/users.js b/src/users.js
+index 3be365d..df036e2 100644
+--- a/src/users.js
++++ b/src/users.js
+@@ -1 +1 @@
+-export const serialize = (u) => ({ id: u.id, email: u.email, phone: u.phone })
++export const serialize = (u) => ({ id: u.id, email: u.email })

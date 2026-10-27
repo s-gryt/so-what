@@ -1,0 +1,9 @@
+syntax = "proto3";
+package orders.v1;
+
+message Order {
+  string id = 1;
+  string customer_id = 2;
+  int64 total_cents = 3;
+  reserved 4;
+}

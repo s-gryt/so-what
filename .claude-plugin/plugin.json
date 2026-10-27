@@ -1,0 +1,5 @@
+{
+  "name": "sw",
+  "description": "so-what: commit messages and pull request descriptions that lead with impact, risk, and an ASCII impact map instead of narrating the diff. Commands: /sw:commit, /sw:pr.",
+  "version": "0.2.0"
+}

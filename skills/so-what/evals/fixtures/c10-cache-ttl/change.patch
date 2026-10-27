@@ -1,0 +1,11 @@
+diff --git a/src/cache.js b/src/cache.js
+index e388e80..9bb98fd 100644
+--- a/src/cache.js
++++ b/src/cache.js
+@@ -1,5 +1,5 @@
+ const store = new Map()
+-const TTL_MS = 60 * 1000
++const TTL_MS = 15 * 60 * 1000
+ 
+ export function get(key, load) {
+   const hit = store.get(key)

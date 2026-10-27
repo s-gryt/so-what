@@ -1,0 +1,33 @@
+{
+  "name": "so-what",
+  "version": "0.1.0",
+  "description": "Agent skill that writes commit messages and pull request descriptions around impact, not diff narration. Installs for Claude Code, Codex, GitHub Copilot, and Antigravity.",
+  "type": "module",
+  "bin": {
+    "so-what": "bin/cli.mjs"
+  },
+  "files": [
+    "bin",
+    "commands",
+    "skills",
+    ".claude-plugin"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "agent-skills",
+    "claude-code",
+    "codex",
+    "copilot",
+    "antigravity",
+    "pull-request",
+    "commit-message"
+  ],
+  "author": "Sergii Grytsaienko (https://github.com/s-gryt)",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/s-gryt/so-what.git"
+  }
+}

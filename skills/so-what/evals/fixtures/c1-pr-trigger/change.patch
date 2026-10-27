@@ -1,0 +1,12 @@
+diff --git a/.github/workflows/docs-check.yml b/.github/workflows/docs-check.yml
+index e6a38ae..6bfbe03 100644
+--- a/.github/workflows/docs-check.yml
++++ b/.github/workflows/docs-check.yml
+@@ -1,7 +1,6 @@
+ name: docs-check
+ on:
+   pull_request:
+-  push:
+     branches: [main]
+   schedule:
+     - cron: "17 6 * * 1"

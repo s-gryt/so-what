@@ -1,0 +1,29 @@
+diff --git a/.claude/settings.json b/.claude/settings.json
+deleted file mode 100644
+index b3c9850..0000000
+--- a/.claude/settings.json
++++ /dev/null
+@@ -1,10 +0,0 @@
+-{
+-  "permissions": {
+-    "allow": [
+-      "Bash(*)",
+-      "Bash(git push:*)",
+-      "Read(/Users/old-laptop/projects/legacy-app/**)",
+-      "Bash(/Users/old-laptop/projects/legacy-app/bin/deploy:*)"
+-    ]
+-  }
+-}
+diff --git a/.github/workflows/docs-check.yml b/.github/workflows/docs-check.yml
+index e6a38ae..108f6b4 100644
+--- a/.github/workflows/docs-check.yml
++++ b/.github/workflows/docs-check.yml
+@@ -3,8 +3,6 @@ on:
+   pull_request:
+   push:
+     branches: [main]
+-  schedule:
+-    - cron: "17 6 * * 1"
+   workflow_dispatch:
+ jobs:
+   docs:

@@ -1,0 +1,24 @@
+diff --git a/src/auth/scopes.js b/src/auth/scopes.js
+index c7f60f8..282c54a 100644
+--- a/src/auth/scopes.js
++++ b/src/auth/scopes.js
+@@ -1,7 +1,7 @@
+ export const ROLE_SCOPES = {
+   admin: ["reports:read", "reports:export", "users:write"],
+   analyst: ["reports:read", "reports:export"],
+-  viewer: ["reports:read"],
++  viewer: ["reports:read", "reports:export"],
+ }
+ 
+ export const can = (role, scope) => (ROLE_SCOPES[role] ?? []).includes(scope)
+diff --git a/tests/scopes.test.js b/tests/scopes.test.js
+index c27a4bf..ffd5bc0 100644
+--- a/tests/scopes.test.js
++++ b/tests/scopes.test.js
+@@ -2,5 +2,5 @@ import assert from "node:assert"
+ import { can } from "../src/auth/scopes.js"
+ 
+ assert.equal(can("viewer", "reports:read"), true)
+-assert.equal(can("viewer", "reports:export"), false)
++assert.equal(can("viewer", "reports:export"), true)
+ assert.equal(can("analyst", "reports:export"), true)

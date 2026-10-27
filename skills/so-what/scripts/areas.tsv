@@ -1,0 +1,12 @@
+^\.github/(copilot-instructions\.md|skills/|prompts/|agents/)	agents	medium
+^(\.github/|\.gitlab-ci\.yml$|\.circleci/|Jenkinsfile$)	ci	high
+^(AGENTS|CLAUDE|GEMINI)\.md$|^\.(agents|agent|claude|codex|cursor|gemini)/	agents	medium
+(^|/)(migrations?|db/migrate)/|\.sql$|(^|/)schema\.prisma$	data	high
+(^|/)(Dockerfile[^/]*|docker-compose[^/]*\.ya?ml)$|\.tf$	infra	high
+(^|/)(auth|authn|authz|security|permissions?|rbac|iam|acl)(/|\.[a-z]+$)	security	high
+\.proto$|\.graphqls?$|(^|/)(openapi|swagger)[^/]*\.(ya?ml|json)$	interface	high
+(^|/)(feature[-_]?flags?|flags)(/|\.[a-z]+$)	flags	high
+(^|/)(tests?|__tests__|spec)/|\.(test|spec)\.[a-z]+$	tests	low
+^docs?/|\.mdx?$	docs	low
+(^|/)(package\.json|package-lock\.json|pnpm-lock\.yaml|yarn\.lock|Cargo\.toml|Cargo\.lock|go\.mod|go\.sum|pyproject\.toml|poetry\.lock|uv\.lock|requirements[^/]*\.txt|Gemfile(\.lock)?)$	deps	medium
+.	source	medium

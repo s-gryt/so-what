@@ -1,0 +1,10 @@
+diff --git a/.tracker/config.yaml b/.tracker/config.yaml
+index 75aab7b..ac69a7b 100644
+--- a/.tracker/config.yaml
++++ b/.tracker/config.yaml
+@@ -1,2 +1,5 @@
+ prefix: app
+ storage: local
++sync:
++  remote: git@github.com:acme/app.git
++  ref: refs/tracker/data
