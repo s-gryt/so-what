@@ -33,7 +33,7 @@ parse. Open with what was broken, blocked, or exposed, and for whom; then what i
 
 State the point and move on, in a collaborative tone. Do not frame through contrast or negation ("not X,
 but Y", "no longer", "instead of", "rather than", "not just", "isn't", a
-sentence opening with No, Not, or Never). `lint.sh` flags these in the
+sentence opening with No, Not, or Never). `lint.mjs` flags these in the
 subject, Impact, `Worst case:`, `Decision:`, and `Needs:` with `forced
 negative: state what is true now`.
 
@@ -46,12 +46,12 @@ consequence it does not support is invented, same as an invented Why.
 Run scripts from the repo root, by this skill's absolute path.
 
 ```bash
-bash <skill>/scripts/facts.sh --staged   # before a commit
-bash <skill>/scripts/facts.sh            # before a PR (base: origin/main)
-bash <skill>/scripts/facts.sh --base <rev> --head <rev>
+node <skill>/scripts/facts.mjs --staged   # before a commit
+node <skill>/scripts/facts.mjs            # before a PR (base: origin/main)
+node <skill>/scripts/facts.mjs --base <rev> --head <rev>
 ```
 
-`facts.sh` prints commits, per-area counts, touched invariants, and a risk
+`facts.mjs` prints commits, per-area counts, touched invariants, and a risk
 floor from [`areas.tsv`](scripts/areas.tsv): first match wins, `#` and
 blank lines are skipped, a deleted file raises it to medium, a touched
 invariant raises it to medium. Repos override with `.so-what/areas.tsv` /
@@ -91,24 +91,24 @@ before merge.
 1. Stage one logical change; split unrelated areas. If you cannot, give
    each concern its own Impact sentence and take type and scope from the
    riskiest.
-2. Run `facts.sh --staged`; note the floor and invariants.
+2. Run `facts.mjs --staged`; note the floor and invariants.
 3. Write the message to a temp file, shaped per
    [commit.md](references/commit.md).
-4. Do the headline check, then `bash <skill>/scripts/lint.sh commit <file>
+4. Do the headline check, then `node <skill>/scripts/lint.mjs commit <file>
    --risk <floor>` plus `--invariant "<name>"` for each touched one. Fix
    every finding.
 5. `git commit -F <file>`, then any attribution trailer the harness needs.
 
 ## Creating or updating a pull request
 
-1. Push. Run `facts.sh` (`--base <target>` if not main); read the full diff
+1. Push. Run `facts.mjs` (`--base <target>` if not main); read the full diff
    and `git log`.
 2. Write the block per [pull-request.md](references/pull-request.md).
-3. Do the headline check, then `lint.sh pr <block> --risk <floor>` with an
-   `--invariant "<name>"` each. Title: `lint.sh subject <title-file>`.
+3. Do the headline check, then `lint.mjs pr <block> --risk <floor>` with an
+   `--invariant "<name>"` each. Title: `lint.mjs subject <title-file>`.
 4. New PR: `gh pr create --title "<title>" --body-file <body>`; the body is
    the block, markers included, plus any required footer.
-5. Existing PR: `bash <skill>/scripts/upsert-pr.sh <n> <block> --risk
+5. Existing PR: `node <skill>/scripts/upsert-pr.mjs <n> <block> --risk
    <floor> --invariant "<name>"`. `--risk` is required. It lints, then
    replaces only the marked block. `--dry-run` previews.
 6. After a behavior-changing push, regenerate and upsert again.

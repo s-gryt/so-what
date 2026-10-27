@@ -2,7 +2,7 @@
 
 Each case is a self-contained fixture under `fixtures/<case>/`: a `base/` tree,
 a `change.patch`, a `mode` (`commit` or `pr`), and the expected risk `floor`.
-`setup.sh` turns one into a git repo. The key impacts below are the ground
+`setup.mjs` turns one into a git repo. The key impacts below are the ground
 truth a judge checks against; they were written from the patch alone.
 Generators never see this file.
 

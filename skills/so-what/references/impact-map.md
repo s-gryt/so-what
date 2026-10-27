@@ -3,7 +3,7 @@
 One diagram of cause and effect from the reader's side: who is affected,
 joined by arrows to what now differs. It restates Impact visually and adds
 no claim. Draw only what this change causes; an arrow the diff does not
-support is as invented as a made-up Why. `lint.sh` checks the mechanics;
+support is as invented as a made-up Why. `lint.mjs` checks the mechanics;
 whether the diagram is true is on you.
 
 ## ASCII (commits always; a PR fallback)
@@ -33,5 +33,5 @@ page.
   `;` is fine.
 - 2-15 non-blank lines, one arrow at least (`-->`, `->>`, `-->>`, `---`,
   `==>`), no file names, no `;` inside sequence message text.
-- If `mmdc` is installed, `lint.sh` also parses the diagram (20 second
+- If `mmdc` is installed, `lint.mjs` also parses the diagram (20 second
   limit). When it cannot launch a browser it warns and skips.

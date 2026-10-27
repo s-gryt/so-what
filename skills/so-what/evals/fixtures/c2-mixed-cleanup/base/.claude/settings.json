@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(*)",
+      "Bash(git push:*)",
+      "Read(/Users/old-laptop/projects/legacy-app/**)",
+      "Bash(/Users/old-laptop/projects/legacy-app/bin/deploy:*)"
+    ]
+  }
+}

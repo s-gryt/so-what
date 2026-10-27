@@ -15,7 +15,7 @@ Rollback: <high risk: revert | revert + <step> | irreversible: <loss>>
 ```
 
 - `type`: feat, fix, docs, ci, build, chore, refactor, perf, test, style,
-  revert. `scope` is the area from `facts.sh` or a narrower name.
+  revert. `scope` is the area from `facts.mjs` or a narrower name.
 - The subject states the outcome ("invoice customers in their own currency"),
   not the edit ("add a currency column").
 - `Impact:` is required, first, 8-45 words. Its first sentence (30 words
@@ -27,7 +27,7 @@ Rollback: <high risk: revert | revert + <step> | irreversible: <loss>>
   never guesses: mark an implied reason `(inferred)`.
 - `Why:` and `Risk:` are required at medium and high risk, optional at low.
 - `Rollback:` follows `Risk:`; required at high risk.
-- Name every invariant `facts.sh` lists in `Risk:` or `Rollback:`, at any
+- Name every invariant `facts.mjs` lists in `Risk:` or `Rollback:`, at any
   risk level, and pass each to lint with `--invariant "<name>"`.
 - The map is required at medium and high risk. It follows a blank line
   after the last label. Rules: [impact map](impact-map.md). Commits take
@@ -66,5 +66,5 @@ Impact: Added saml.ts and updated the login route.
 
 A diff-narrating message for the single sign-on change. The reader learns
 which files moved, and nothing about who can now sign in, what could go
-wrong, or what to decide. `lint.sh` rejects it: edit-verb opener, file
+wrong, or what to decide. `lint.mjs` rejects it: edit-verb opener, file
 name, and no `Needs:`, `Why:`, `Risk:`, `Rollback:`, or map.

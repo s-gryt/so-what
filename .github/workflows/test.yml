@@ -10,19 +10,12 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
+        node: [18, 24]
     runs-on: ${{ matrix.os }}
-    defaults:
-      run:
-        shell: bash
     steps:
       - uses: actions/checkout@v5
-      - run: bash skills/so-what/scripts/test.sh
-  awk-variants:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v5
-      - run: sudo apt-get update && sudo apt-get install -y mawk gawk
-      - name: test with mawk
-        run: AWK=mawk bash skills/so-what/scripts/test.sh
-      - name: test with gawk
-        run: AWK=gawk bash skills/so-what/scripts/test.sh
+      - uses: actions/setup-node@v5
+        with:
+          node-version: ${{ matrix.node }}
+      - run: node skills/so-what/scripts/test.mjs
+      - run: node skills/so-what/evals/selftest.mjs

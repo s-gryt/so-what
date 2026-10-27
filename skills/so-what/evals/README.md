@@ -1,11 +1,20 @@
 # so-what evals
 
-Measures whether the skill makes descriptions explain impact rather than
-narrate the diff, stay short, carry a correct ASCII impact map, and deliver
-the full message from the headline view alone. Fixtures are self-contained,
-scripts are plain `bash` + `awk` (Linux, macOS, Git Bash). `scripts/test.sh`
-tests the skill's scripts and `selftest.sh` tests the helpers here; this
-folder grades model output.
+Measures how well the skill makes descriptions explain impact, stay short,
+carry a correct ASCII impact map, and deliver the full message from the
+headline view alone. The fixtures are self-contained. This folder grades
+model output. `scripts/test.mjs` tests the skill's scripts. `selftest.mjs`
+tests the helpers in this folder.
+
+## Requirements
+
+- Node.js 18 or later.
+- git.
+
+The scripts run on macOS, Linux, and Windows. They use the Node standard
+library only. Start each script with `node`, for example
+`node evals/selftest.mjs`. An older skill version that has only
+`scripts/lint.sh` needs `bash` to lint its arm in `score.mjs`.
 
 ## Layout
 
@@ -15,14 +24,14 @@ folder grades model output.
 | `cases.md` | Key impacts, traps, map expectation per case. Generators never see it |
 | `prompts/generate.md` | Generator template |
 | `prompts/judge.md`, `prompts/headline-judge.md` | Full-output judge and headline judge templates |
-| `setup.sh <case> <dir>` | Build a throwaway git repo for one case |
-| `prepare.sh <run> --arm name=<skill-dir\|none>... [--cases c1,c2] [--runs N]` | Create every cell and its rendered generator prompt |
-| `score.sh <run>` | Mechanical: lint with each arm's own `lint.sh`, map validity, word count |
-| `headline.sh <file>` | Extract the headline view of one output: title (commits), Impact sentence, worst case or `Risk:`, `Decision:`/`Needs:`, map |
-| `blind.sh <run> <case> [rN]` | Shuffle all arms into X1..Xn per run, write key and headline file |
-| `judge-prep.sh <run>` | Run `blind.sh` for every case and run, render judge prompts |
-| `aggregate.sh <run>` | Join both judge files with the keys, print per-arm means and spread |
-| `cells.sh`, `selftest.sh` | Helper listing outputs; self-checks for the helpers |
+| `setup.mjs <case> <dir>` | Build a throwaway git repo for one case |
+| `prepare.mjs <run> --arm name=<skill-dir\|none>... [--cases c1,c2] [--runs N]` | Create every cell and its rendered generator prompt |
+| `score.mjs <run>` | Mechanical: lint with each arm's own lint script, map validity, word count |
+| `headline.mjs <file>` | Extract the headline view of one output: title (commits), Impact sentence, worst case or `Risk:`, `Decision:`/`Needs:`, map |
+| `blind.mjs <run> <case> [rN]` | Shuffle all arms into X1..Xn per run, write key and headline file. The case and run seed the shuffle, so a rerun gives the same labels |
+| `judge-prep.mjs <run>` | Run the blind step for every case and run, render judge prompts |
+| `aggregate.mjs <run>` | Join both judge files with the keys, print per-arm means and spread |
+| `cells.mjs`, `selftest.mjs`, `lib.mjs` | Helper that lists outputs; self-checks for the helpers; code that the scripts share |
 
 A run directory looks like this:
 
@@ -39,25 +48,25 @@ The older `<run>/<arm>/<case>/out.txt` layout is read as run `r1`.
 
 1. **Arms.** `baseline` (`none`: no skill), plus one arm per skill version
    under test, for example `previous` and `candidate`. Run
-   `prepare.sh <run> --arm baseline=none --arm previous=<dir> --arm
+   `node prepare.mjs <run> --arm baseline=none --arm previous=<dir> --arm
    candidate=<dir> --runs 3`. It prints one prompt path per cell. Each skill
-   arm gets a copy of its skill without `evals/` and `.omc/`, and is told to
-   gather facts with `facts.sh --no-log`, so original commit messages are
-   never visible.
+   arm gets a copy of its skill without `evals/` and `.omc/`. The prompt tells
+   the arm to gather facts with its own facts script and `--no-log`, so
+   original commit messages are never visible.
 2. **Generate.** Start one generator subagent per printed prompt (Haiku, in a
    fresh context). Each writes `out.txt` next to its prompt. Use at least 3
    runs per cell: single runs cannot separate a real difference from noise.
-3. **Mechanical.** `score.sh <run>`: `core` = lint findings other than the
-   map, using the `lint.sh` of the skill version that arm used (`none` arms
-   use the current skill); `map` = ok, absent, or invalid; `words` = output
+3. **Mechanical.** `node score.mjs <run>`: `core` = lint findings other than
+   the map, using the lint script of the skill version that arm used (`none`
+   arms use the current skill); `map` = ok, absent, or invalid; `words` = output
    length.
-4. **Blind judges.** `judge-prep.sh <run>` shuffles outputs per case and run
+4. **Blind judges.** `node judge-prep.mjs <run>` shuffles outputs per case and run
    and prints the judge prompt paths. Start one subagent per prompt, Sonnet by
    default (Haiku judges had too much variance). The full-output judge writes
    `judge/<case>.rN.tsv`. The headline judge sees only `cases.md` and the
    headline file, never the patch or full outputs, and writes
    `judge/<case>.rN.headline.tsv`.
-5. **Aggregate.** `aggregate.sh <run>` unblinds and prints, per arm, the means
+5. **Aggregate.** `node aggregate.mjs <run>` unblinds and prints, per arm, the means
    of each dimension, `core/25`, the standard deviation of core across runs,
    and a per-case table.
 6. **Record** a dated entry under Results.
@@ -77,10 +86,10 @@ A version passes when all of these hold:
 
 - it beats baseline on impact_first, traps, and headline;
 - it does not lose accuracy against the previous version;
-- every output lints with its own skill's `lint.sh`;
+- every output lints with its own skill's lint script;
 - map averages 4 or more across valid maps.
 
-Arms differ in structure (an older skill version may use another marker or no map at all), so a judge can sometimes tell arms apart despite blinding. This is unavoidable; `blind.sh` only normalizes the `impact-recap:` marker to `so-what:`. Do not read single-cell differences as proof.
+Arms differ in structure (an older skill version may use another marker or no map at all), so a judge can sometimes tell arms apart despite blinding. This is unavoidable; `blind.mjs` only normalizes the `impact-recap:` marker to `so-what:`. Do not read single-cell differences as proof.
 
 Treat differences smaller than the standard deviation of core across runs as
 noise.

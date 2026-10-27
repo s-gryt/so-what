@@ -1,6 +1,7 @@
 # Agent and tool session state
 .omc/
 .claude/
+!skills/so-what/evals/fixtures/**/.claude/
 .serena/
 
 # Dependencies and package output

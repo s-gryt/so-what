@@ -17,8 +17,9 @@ or escalate.
 
 ## Install
 
-The skill needs `git`, `bash`, `awk`, and the `gh` CLI for pull requests.
-The `npx` installer needs Node.js 18 or later. Pick your agent.
+The skill needs `git`, Node.js 18 or later, and the `gh` CLI for pull requests.
+Its scripts run on macOS, Linux, and Windows.
+Pick your agent.
 
 <details>
 <summary><strong>Claude Code</strong></summary>
@@ -131,7 +132,7 @@ agent from the list above.
                                   |
                                   v
   +------------------------------------------------------------------+
-  | 1. FACTS    facts.sh reads the diff and reports:                 |
+  | 1. FACTS    facts.mjs reads the diff and reports:                |
   |             - areas touched: ci, data, interface, ...            |
   |             - protected invariants the change touches            |
   |             - risk floor, set from the changed paths             |
@@ -159,7 +160,7 @@ agent from the list above.
                                   |
                                   v
   +------------------------------------------------------------------+
-  | 4. LINT     lint.sh checks the text and the agent fixes          |
+  | 4. LINT     lint.mjs checks the text and the agent fixes         |
   |             every finding: edit-verb openers, file names,        |
   |             forced negatives, missing fields, bad maps           |
   +------------------------------------------------------------------+
@@ -168,7 +169,7 @@ agent from the list above.
   +------------------------------------------------------------------+
   | 5. SHIP     commit:       git commit -F <file>                   |
   |             new PR:       gh pr create --body-file <file>        |
-  |             existing PR:  upsert-pr.sh replaces the marked       |
+  |             existing PR:  upsert-pr.mjs replaces the marked      |
   |                           block and keeps hand-written notes     |
   +------------------------------------------------------------------+
 ```
@@ -206,7 +207,8 @@ Full examples, each one linted:
 risk floor. The first match wins, and the last row catches everything else.
 Areas: agents, ci, data, infra, tests, docs, security, interface, flags, deps,
 source. Override it per repo with `.so-what/areas.tsv` at the repo root, or
-with `SO_WHAT_AREAS=<file>`.
+with `SO_WHAT_AREAS=<file>`. Patterns use JavaScript regular expression
+syntax. POSIX bracket classes such as `[[:alpha:]]` also work.
 
 **Invariants.** Name the rules your repo protects in
 `.so-what/invariants.tsv` (or `SO_WHAT_INVARIANTS=<file>`). Each row holds
@@ -216,10 +218,10 @@ medium, and lint then requires the invariant's name in Risk. See
 [`invariants.example.tsv`](skills/so-what/references/invariants.example.tsv).
 
 **Plan mode.** Before a PR has code, the agent can write a short plan block
-with `upsert-pr.sh <n> <block> --kind plan --risk <level>`. No diff exists
+with `upsert-pr.mjs <n> <block> --kind plan --risk <level>`. No diff exists
 yet, so `<level>` is the expected risk from the block. The block holds
 `## Plan`, the expected risk, and the verification plan. The later recap replaces it and
-adds `## Plan vs actual`. `upsert-pr.sh <n> --show` prints the current block.
+adds `## Plan vs actual`. `upsert-pr.mjs <n> --show` prints the current block.
 
 </details>
 
@@ -227,7 +229,7 @@ adds `## Plan vs actual`. `upsert-pr.sh <n> --show` prints the current block.
 <summary><strong>Develop</strong></summary>
 
 ```bash
-bash skills/so-what/scripts/test.sh    # lint, upsert, and facts self-test
+node skills/so-what/scripts/test.mjs    # lint, upsert, and facts self-test
 node bin/cli.mjs --dir /tmp/demo --agent all --dry-run
 ```
 

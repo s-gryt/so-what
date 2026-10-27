@@ -1,7 +1,7 @@
 # Pull request recap block
 
 The title follows the commit subject rules. The body is this block plus any
-footer the harness requires. `upsert-pr.sh` swaps only the block.
+footer the harness requires. `upsert-pr.mjs` swaps only the block.
 
 The reader sees `Impact` and `Impact map`; everything else folds into one
 `<details>`.
@@ -70,7 +70,7 @@ Rollback: <revert | revert + <extra step> | irreversible: <what is lost>>
   and ends at the next unindented line.
 - The map is required at medium and high risk. Default to a `mermaid`
   fence; see [impact map](impact-map.md).
-- Risk is at least the floor from `facts.sh`. The table must have the
+- Risk is at least the floor from `facts.mjs`. The table must have the
   literal header `Area | Risk` and one row per area, in plain words ("CI
   checks"), merging rows only when they share a consequence.
 - `Rollback:` in Risk is required at high risk, case-insensitive.
