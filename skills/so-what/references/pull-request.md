@@ -21,9 +21,9 @@ Decision: <what the reviewer must decide before merge, 25 words max>
 
 ## Impact map
 
-```mermaid
-flowchart LR
-    <short plain-word nodes joined by -->
+```text
+before: [<who>] --> [<step>] --> (<outcome>)
+after:  [<who>] --> [<step>] --> (<outcome>)
 ```
 
 <details>
@@ -68,8 +68,9 @@ Rollback: <revert | revert + <extra step> | irreversible: <what is lost>>
   starts with "none" at high risk. Neither counts toward Impact's words.
 - Labels may be bold (`**Decision:**`). A field continues on indented lines
   and ends at the next unindented line.
-- The map is required at medium and high risk. Default to a `mermaid`
-  fence; see [impact map](impact-map.md).
+- The map is required at medium and high risk. Default to an ASCII map in
+  a `text` fence. A `mermaid` fence is an option; see
+  [impact map](impact-map.md).
 - Risk is at least the floor from `facts.mjs`. The table must have the
   literal header `Area | Risk` and one row per area, in plain words ("CI
   checks"), merging rows only when they share a consequence.
@@ -86,52 +87,4 @@ Rollback: <revert | revert + <extra step> | irreversible: <what is lost>>
 
 ## Example
 
-````markdown
-<!-- so-what:start -->
-## Impact
-
-Enterprise prospects require staff to sign in with their company accounts,
-and deals have waited on it; staff can now sign in through their identity
-provider, such as Okta. Each tenant turns SSO on when it is ready.
-
-Worst case: a misconfigured identity provider blocks one tenant's sign-in; password sign-in stays available as the fallback.
-Decision: approve turning SSO on per tenant, starting with the pilot customers.
-
-## Impact map
-
-```mermaid
-flowchart LR
-    A[Staff open sign-in] --> B[Redirect to company login]
-    B --> C[Okta confirms identity]
-    C --> D[Staff land in the app]
-    B -.-> E[Password sign-in fallback]
-```
-
-<details>
-<summary>Why, risk, verification</summary>
-
-## Why
-
-Security reviews at enterprise prospects require company-managed sign-in,
-which sales could not offer.
-
-## Risk: high
-
-| Area | Risk | What changes in behavior |
-| ---- | ---- | ------------------------ |
-| Sign-in | high | SSO tenants sign in through their company account; others keep passwords |
-
-A tenant with a wrong identity provider setting cannot sign in with SSO
-until an admin corrects it; the sign-in page shows the error.
-
-Rollback: revert + SSO tenants return to password sign-in
-
-## Verification
-
-- Signed in through an Okta test tenant: staff reached the right workspace.
-- Switched SSO off for that tenant: password sign-in worked again.
-- Not verified: Azure AD. owner: platform lead, during the pilot.
-
-</details>
-<!-- so-what:end -->
-````
+[Worked example: pull request block](example.md#pull-request-block).

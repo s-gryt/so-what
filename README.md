@@ -1,16 +1,21 @@
 # so-what (`sw`)
 
-Commit messages and pull requests that tell the reviewer what matters.
+<img src="assets/so-what.svg" alt="so-what" width="612">
 
-Coding agents write fast, and they describe their work badly. A typical
-message lists the files that changed. The reviewer must then read the diff
-to learn who is affected and what can break.
+**Every commit and pull request opens with its impact.**
 
-so-what makes your agent put three answers at the top:
+A reviewer decides fast when the first lines say what the change means.
+so-what teaches your coding agent to write those lines.
 
-- **Impact:** who notices the change, and what is different for them.
-- **Risk:** the worst case, and what was checked.
-- **Decision:** what the reviewer must decide.
+Your agent opens each commit message and pull request with three answers:
+
+- **Impact:** who is affected, and what is different for them.
+- **Risk:** the worst case, and the checks that ran.
+- **Decision:** what the reviewer must choose.
+
+Every answer comes from the real diff. A script reads the diff and sets a
+risk floor from the changed paths. A lint step checks the text. At medium
+and high risk, an impact map shows cause and effect at a glance.
 
 The reviewer reads the first lines and knows enough to approve, push back,
 or escalate.
@@ -124,6 +129,9 @@ writes it once.
 Ask your agent for a commit or a pull request, or run the command for your
 agent from the list above.
 
+See the [worked example](skills/so-what/references/example.md): one change
+from diff to commit, pull request, and plan.
+
 <details>
 <summary><strong>How it works</strong></summary>
 
@@ -183,18 +191,20 @@ The headline view is the part a reviewer reads first:
   | Impact:  first sentence       |   | ## Impact   first sentence     |
   | Risk:    worst case           |   | Worst case: ...                |
   | Needs:   what to decide       |   | Decision:   ...                |
-  | [ASCII impact map]            |   | ## Impact map  (mermaid)       |
+  | [ASCII impact map]            |   | ## Impact map  (ASCII)         |
   +-------------------------------+   | > Why, risk, verification      |
                                       |   (folded)                     |
                                       +--------------------------------+
 ```
 
-Full examples, each one linted:
+One worked example shows every stage for one change. The test suite lints
+it: [facts, commit, pull request, plan, and impact maps](skills/so-what/references/example.md).
+Format rules:
 
-- [A commit](skills/so-what/references/commit.md)
-- [A pull request block](skills/so-what/references/pull-request.md)
+- [Commit](skills/so-what/references/commit.md)
+- [Pull request block](skills/so-what/references/pull-request.md)
 - [Impact maps, ASCII and mermaid](skills/so-what/references/impact-map.md)
-- [A plan, written before the code exists](skills/so-what/references/plan.md)
+- [Plan, written before the code exists](skills/so-what/references/plan.md)
 - [Ten graded cases, with traps](skills/so-what/evals/cases.md)
 - [Eval method and results](skills/so-what/evals/README.md)
 

@@ -6,12 +6,11 @@ no claim. Draw only what this change causes; an arrow the diff does not
 support is as invented as a made-up Why. `lint.mjs` checks the mechanics;
 whether the diagram is true is on you.
 
-## ASCII (commits always; a PR fallback)
+## ASCII (the default)
 
-```text
-was: [EU account] --> [dollar invoice] --> (invoice sent back)
-now: [EU account] --> [euro invoice] --> (paid in euros)
-```
+Commits always use ASCII. A PR uses ASCII in a `text` fence by default.
+Examples: the maps in the [commit message](example.md#commit-message) and
+the [pull request block](example.md#pull-request-block).
 
 - Printable ASCII only: boxes use `+ - |`, flow uses `-->`, `==>`, `->`, or
   `|` over `v`. `<- changed` alone is not an arrow. No tabs or Unicode.
@@ -22,11 +21,12 @@ now: [EU account] --> [euro invoice] --> (paid in euros)
   right. When behavior changed, draw before and after as two rows.
 - Every box wall `|` has a `|`, `+`, `v`, or `^` directly above or below.
 
-## Mermaid (pull requests: the default)
+## Mermaid (pull requests: an option)
 
-GitHub renders it on the PR page. Use `flowchart LR` with 3-6 nodes and
-short plain-word labels. ASCII is an allowed fallback when it fits the PR
-page.
+Example: the [mermaid option](example.md#mermaid-option).
+GitHub renders it on the PR page. Choose it when the flow branches or
+needs more than 3 rows. Use `flowchart LR` with 3-6 nodes and short
+plain-word labels.
 
 - The first non-blank line is `sequenceDiagram`, `flowchart <dir>`, or
   `graph <dir>`; `<dir>` is `TD`, `TB`, `BT`, `RL`, or `LR`. A trailing

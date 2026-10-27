@@ -16,8 +16,8 @@ Rollback: <high risk: revert | revert + <step> | irreversible: <loss>>
 
 - `type`: feat, fix, docs, ci, build, chore, refactor, perf, test, style,
   revert. `scope` is the area from `facts.mjs` or a narrower name.
-- The subject states the outcome ("invoice customers in their own currency"),
-  not the edit ("add a currency column").
+- The subject states the outcome for the reader. See the
+  [example subject](example.md#commit-message).
 - `Impact:` is required, first, 8-45 words. Its first sentence (30 words
   max) names the problem solved or the behavior changed, and for whom, in
   plain words a non-specialist can follow.
@@ -40,31 +40,5 @@ Rollback: <high risk: revert | revert + <step> | irreversible: <loss>>
 
 ## Example
 
-```text
-feat(billing): invoice customers in their own currency
-
-Impact: Finance can send invoices in euros or pounds, which lets us bill
-the EU and UK accounts that require local-currency invoices. Customers
-without a currency setting keep receiving dollar invoices.
-Needs: Choose the first customers to bill in euros or pounds.
-Why: EU and UK accounts require local-currency invoices before they pay.
-Risk: medium - worst case, an invoice total differs by one cent from the
-payment provider's total after rounding. Checked: EUR and GBP test
-invoices matched the provider sandbox totals.
-
-    was: [EU account] --> [dollar invoice] --> (invoice sent back)
-    now: [EU account] --> [euro invoice] --> (paid in euros)
-```
-
-## Counter-example
-
-```text
-feat: add saml
-
-Impact: Added saml.ts and updated the login route.
-```
-
-A diff-narrating message for the single sign-on change. The reader learns
-which files moved, and nothing about who can now sign in, what could go
-wrong, or what to decide. `lint.mjs` rejects it: edit-verb opener, file
-name, and no `Needs:`, `Why:`, `Risk:`, `Rollback:`, or map.
+[Worked example: commit message](example.md#commit-message), and
+[the counter-example](example.md#counter-example) that `lint.mjs` rejects.

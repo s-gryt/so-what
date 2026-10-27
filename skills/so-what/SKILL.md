@@ -68,7 +68,8 @@ the real diff; `--no-log` hides subjects.
 - High: add `Rollback:` (`revert`, `revert + <extra step>`, or
   `irreversible: <what is lost>`).
 - Any level: name each touched invariant in Risk.
-- Maps: a PR defaults to a `mermaid` `flowchart LR`; commits use ASCII.
+- Maps: ASCII is the default for commits and PRs. A PR may use a `mermaid`
+  `flowchart LR` as an option; commits take ASCII only.
   Rules: [impact map](references/impact-map.md).
 
 ## Never invent the why
@@ -113,5 +114,6 @@ before merge.
    replaces only the marked block. `--dry-run` previews.
 6. After a behavior-changing push, regenerate and upsert again.
 
+One worked example for every stage: [example](references/example.md).
 Before code exists, see [plan mode](references/plan.md). Lint failures and
 self-test: [troubleshooting](references/troubleshooting.md).

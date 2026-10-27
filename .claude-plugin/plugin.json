@@ -1,7 +1,7 @@
 {
   "name": "sw",
   "description": "so-what: commit messages and pull request descriptions that lead with impact, risk, and an impact map instead of narrating the diff. Commands: /sw:commit, /sw:pr.",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "author": {
     "name": "Sergii Grytsaienko",
     "url": "https://github.com/s-gryt"

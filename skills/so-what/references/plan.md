@@ -18,22 +18,4 @@ so `facts.mjs` gives no floor: pass the level from `## Risk: <level>`.
 
 ## Plan example
 
-````markdown
-<!-- so-what:start -->
-## Plan
-
-Account teams will onboard a large customer in minutes by uploading one
-CSV of customer records, so the data arrives without manual entry. Rows
-the import cannot read come back in a list, and the team re-uploads only
-those.
-
-## Risk: medium
-
-A wrong column mapping could create duplicate customer records.
-
-## Verification plan
-
-- Import 10,000 rows into a test workspace and compare the counts.
-- Re-upload the same file and confirm the record count stays the same.
-<!-- so-what:end -->
-````
+[Worked example: plan block](example.md#plan-block).

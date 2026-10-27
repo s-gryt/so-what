@@ -1038,15 +1038,21 @@ function extract(file, heading) {
   return unlines(out);
 }
 const refs = path.join(here, '..', 'references');
-write('ref-commit', extract(path.join(refs, 'commit.md'), 'Example'));
-write('ref-pr', extract(path.join(refs, 'pull-request.md'), 'Example'));
-write('ref-plan', extract(path.join(refs, 'plan.md'), 'Plan example'));
-write('ref-commit-counter', extract(path.join(refs, 'commit.md'), 'Counter-example'));
-expect('pass', 'ref-commit-example-lints', lint('commit', W('ref-commit'), '--risk', 'medium'));
+const example = path.join(refs, 'example.md');
+write('ref-commit', extract(example, 'Commit message'));
+write('ref-pr', extract(example, 'Pull request block'));
+write('ref-plan', extract(example, 'Plan block'));
+write('ref-commit-counter', extract(example, 'Counter-example'));
+write('ref-facts', extract(example, 'Facts'));
+write('ref-pr-mermaid', read(W('ref-pr')).replace(/^```text\n[\s\S]*?\n```$/m, `\`\`\`mermaid\n${extract(example, 'Mermaid option').trimEnd()}\n\`\`\``));
+expect('pass', 'ref-commit-example-lints', lint('commit', W('ref-commit'), '--risk', 'high'));
 expect('pass', 'ref-pr-example-lints', lint('pr', W('ref-pr'), '--risk', 'high'));
-expect('pass', 'ref-pr-example-uses-mermaid', hasMatch(W('ref-pr'), /^```mermaid/));
-expect('pass', 'ref-plan-example-lints', lint('plan', W('ref-plan'), '--risk', 'medium'));
+expect('pass', 'ref-pr-example-uses-ascii', hasMatch(W('ref-pr'), /^```text$/));
+expect('pass', 'ref-pr-mermaid-option-lints', lint('pr', W('ref-pr-mermaid'), '--risk', 'high'));
+expect('pass', 'ref-pr-mermaid-option-uses-mermaid', hasMatch(W('ref-pr-mermaid'), /^```mermaid$/));
+expect('pass', 'ref-plan-example-lints', lint('plan', W('ref-plan'), '--risk', 'high'));
 expect('fail', 'ref-commit-counter-example-rejected', lint('commit', W('ref-commit-counter'), '--risk', 'high'));
+expect('pass', 'ref-facts-example-rates-medium', hasMatch(W('ref-facts'), /^risk: medium \(driven by source\)$/));
 
 process.stdout.write(`${passed} passed, ${failed} failed\n`);
 process.exitCode = failed === 0 ? 0 : 1;
