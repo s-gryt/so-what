@@ -18,7 +18,7 @@ or escalate.
 ## Install
 
 The skill needs `git`, `bash`, `awk`, and the `gh` CLI for pull requests.
-Pick your agent.
+The `npx` installer needs Node.js 18 or later. Pick your agent.
 
 <details>
 <summary><strong>Claude Code</strong></summary>
@@ -45,7 +45,7 @@ Commands: `/sw:commit`, `/sw:pr`, `/sw:pr <number>`.
 npx github:s-gryt/so-what -g -a codex
 ```
 
-Commands: `/prompts:sw-commit`, `/prompts:sw-pr`.
+Skills: `$sw-commit`, `$sw-pr`.
 
 </details>
 
@@ -56,7 +56,8 @@ Commands: `/prompts:sw-commit`, `/prompts:sw-pr`.
 npx github:s-gryt/so-what -a copilot
 ```
 
-Prompts: `sw-commit`, `sw-pr`.
+Prompt files: `/sw-commit`, `/sw-pr`. They run in IDEs that support Copilot
+prompt files, such as VS Code. Other Copilot clients use the skill alone.
 
 </details>
 
@@ -78,7 +79,7 @@ Re-run the command to update.
 npx github:s-gryt/so-what -a antigravity
 ```
 
-Workflows: `sw-commit`, `sw-pr`.
+Skills: `/sw-commit`, `/sw-pr`.
 
 </details>
 
@@ -102,15 +103,18 @@ npx github:s-gryt/so-what -g -a claude,codex   # your user account
 npx github:s-gryt/so-what list                 # what is installed where
 ```
 
-`--force` overwrites existing installs. `--dry-run` lists each file it
-would write.
+`--force` overwrites existing installs. `--dry-run` prints each skill
+directory and command file it would write, and writes nothing.
 
-| Agent          | Skill (project)   | Skill (global)                  | Slash command                                                             |
-| -------------- | ----------------- | ------------------------------- | ------------------------------------------------------------------------- |
-| Claude Code    | `.claude/skills/` | `~/.claude/skills/`             | `/sw:commit`, `/sw:pr` (`.claude/commands/sw/`)                           |
-| Codex          | `.agents/skills/` | `~/.agents/skills/`             | `/prompts:sw-commit`, `/prompts:sw-pr` (global only, `~/.codex/prompts/`) |
-| GitHub Copilot | `.github/skills/` | `~/.copilot/skills/`            | `sw-commit`, `sw-pr` prompt files (project only, `.github/prompts/`)      |
-| Antigravity    | `.agent/skills/`  | `~/.gemini/antigravity/skills/` | `sw-commit`, `sw-pr` workflows (`.agent/workflows/`, global: `global_workflows/`) |
+| Agent          | Skill (project)   | Skill (global)             | Commands                                                               |
+| -------------- | ----------------- | -------------------------- | ---------------------------------------------------------------------- |
+| Claude Code    | `.claude/skills/` | `~/.claude/skills/`        | `/sw:commit`, `/sw:pr` (`.claude/commands/sw/`)                        |
+| Codex          | `.agents/skills/` | `~/.agents/skills/`        | `$sw-commit`, `$sw-pr` (skills next to `so-what`)                      |
+| GitHub Copilot | `.github/skills/` | `~/.copilot/skills/`       | `/sw-commit`, `/sw-pr` prompt files (project only, `.github/prompts/`) |
+| Antigravity    | `.agents/skills/` | `~/.gemini/config/skills/` | `/sw-commit`, `/sw-pr` (skills next to `so-what`)                      |
+
+Codex and Antigravity share `.agents/skills/` in a project. The installer
+writes it once.
 
 </details>
 
@@ -212,8 +216,9 @@ medium, and lint then requires the invariant's name in Risk. See
 [`invariants.example.tsv`](skills/so-what/references/invariants.example.tsv).
 
 **Plan mode.** Before a PR has code, the agent can write a short plan block
-with `upsert-pr.sh <n> <block> --kind plan`. The block holds `## Plan`, the
-expected risk, and the verification plan. The later recap replaces it and
+with `upsert-pr.sh <n> <block> --kind plan --risk <level>`. No diff exists
+yet, so `<level>` is the expected risk from the block. The block holds
+`## Plan`, the expected risk, and the verification plan. The later recap replaces it and
 adds `## Plan vs actual`. `upsert-pr.sh <n> --show` prints the current block.
 
 </details>

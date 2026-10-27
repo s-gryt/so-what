@@ -35,8 +35,8 @@
   script re-reads the body just before writing, which narrows but cannot
   close that window, because GitHub has no conditional body update. Avoid
   refreshing while a bot is still writing its summary.
-- `gh pr edit` fails: `upsert-pr.sh <n> <block> --dry-run` prints the
-  merged body; apply it by other means.
+- `gh pr edit` fails: `upsert-pr.sh <n> <block> --risk <floor> --dry-run`
+  prints the merged body; apply it by other means.
 - `upsert-pr.sh <n> --show` prints nothing: the PR body has no recap or
   plan block yet.
 

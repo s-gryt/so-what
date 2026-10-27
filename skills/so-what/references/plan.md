@@ -1,7 +1,9 @@
 # Plan mode
 
 Before a PR has code, write a plan block with the same markers. Lint with
-`lint.sh plan <block>`; upsert with `upsert-pr.sh <n> <block> --kind plan`.
+`lint.sh plan <block> --risk <level>`; upsert with
+`upsert-pr.sh <n> <block> --kind plan --risk <level>`. No diff exists yet,
+so `facts.sh` gives no floor: pass the level from `## Risk: <level>`.
 
 - Required, in order: `## Plan` (20-70 words; the first sentence, 30 words
   max, names who will notice what), `## Risk: <level>` (expected level),

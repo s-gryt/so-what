@@ -36,7 +36,7 @@ Map:
     PR -> main  ==> check runs
     push main   ==> no check" "$(bash "$here/headline.sh" "$work/commit.txt")"
 
-# PR: no title, Worst case, wrapped bold Decision, json fence ignored, map fence kept
+# PR: leading title line, Worst case, wrapped bold Decision, json fence ignored, map fence kept
 cat >"$work/pr.txt" <<'X'
 Narrow order totals to strings
 
@@ -66,7 +66,7 @@ producer(new) --f3--> consumer(old) ==> misdecode
 </details>
 <!-- so-what:end -->
 X
-check pr 'Title: (none, PR body only)
+check pr 'Title: Narrow order totals to strings
 Impact: Services deploying separately misread `Order` totals.
 Worst case: Orders are billed at the wrong amount.
 Decision: Agree a deploy order before merging.

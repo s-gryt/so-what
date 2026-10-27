@@ -1,6 +1,9 @@
 {
   "name": "so-what",
-  "owner": { "name": "Sergii Grytsaienko" },
+  "description": "Impact-first commit messages and pull request descriptions for Claude Code.",
+  "owner": {
+    "name": "Sergii Grytsaienko"
+  },
   "plugins": [
     {
       "name": "sw",

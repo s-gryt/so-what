@@ -10,7 +10,8 @@
     "bin",
     "commands",
     "skills",
-    ".claude-plugin"
+    ".claude-plugin",
+    "!**/.omc"
   ],
   "engines": {
     "node": ">=18"
