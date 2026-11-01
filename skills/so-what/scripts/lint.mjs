@@ -254,7 +254,7 @@ function check_map() {
   if (wide !== '') map_fail(`names a file (${wide}); nodes name who or what behaves differently, not files`);
 }
 
-// Mermaid impact map (pull requests only): mechanical checks; mmdc parses it when installed.
+// Mermaid impact map (pull requests and plans): mechanical checks; mmdc parses it when installed.
 function check_mermaid() {
   let shown = 0;
   let arrows = 0;
@@ -384,6 +384,7 @@ function lint() {
   let map_mermaid = false;
   let decision_seen = false, decision = '', decision_order = 0;
   let worst_seen = false, worst = '', worst_order = 0;
+  let focus_seen = false, focus = '', focus_order = 0;
   let prose_since_worst = false;
   let prose_words = 0;
   let rollback_seen = false, rollback = '';
@@ -397,10 +398,7 @@ function lint() {
         if (section === 'Impact map') {
           if (map_count > 0) fail(`line ${i}: ## Impact map holds one fenced diagram`);
           fence = 'map';
-          if (/^[ \t]*```mermaid/.test(line)) {
-            map_mermaid = true;
-            if (kind !== 'pr') fail(`line ${i}: mermaid impact maps are for pull requests; use a \`\`\`text fence`);
-          }
+          if (/^[ \t]*```mermaid/.test(line)) map_mermaid = true;
         } else fence = 'code';
         body.set(section, `${get(body, section)} ${fence}`);
       } else fence = '';
@@ -438,15 +436,17 @@ function lint() {
       continue;
     }
     if (section === 'Impact') {
-      if (parse_label(line, 'Decision|Worst case')) {
+      if (parse_label(line, 'Decision|Worst case|Review focus')) {
         impact_field = parsed_label;
         if (parsed_label === 'Decision') { decision_seen = true; decision = parsed_rest; decision_order = ++label_order; }
+        else if (parsed_label === 'Review focus') { focus_seen = true; focus = parsed_rest; focus_order = ++label_order; }
         else { worst_seen = true; worst = parsed_rest; worst_order = ++label_order; }
         prose_words += words(line);
         continue;
       }
       if (impact_field !== '' && continues(line)) {
         if (impact_field === 'Decision') decision = `${decision} ${trim(line)}`;
+        else if (impact_field === 'Review focus') focus = `${focus} ${trim(line)}`;
         else worst = `${worst} ${trim(line)}`;
         prose_words += words(line);
         continue;
@@ -511,6 +511,9 @@ function lint() {
     if (worst_seen) check_label_words('Worst case:', worst, 20);
     else if (effective >= 2) fail(`Worst case: is required at ${effective >= 3 ? 'high' : 'medium'} risk; add a 'Worst case:' line directly before Decision:`);
     if (worst_seen && decision_seen && (worst_order > decision_order || prose_since_worst)) fail('Worst case: must come directly before Decision:');
+    // Review focus names where to read first, so file names are allowed there.
+    if (focus_seen) check_label_words('Review focus:', focus, Infinity);
+    if (focus_seen && decision_seen && focus_order < decision_order) fail('Review focus: must come after Decision:');
     if (decision_seen) { check_label_words('Decision:', decision, 25); check_not_none('Decision:', decision, effective); }
     else if (effective >= 2) fail(`Decision: is required at ${effective >= 3 ? 'high' : 'medium'} risk; add a 'Decision:' line to ## Impact (what the reviewer must decide before merge)`);
     if (effective >= 3) {
@@ -546,7 +549,7 @@ function which(command) {
 }
 
 // Optional: parse a mermaid impact map with mmdc when it is installed.
-const mmdc = kind === 'pr' ? which('mmdc') : '';
+const mmdc = kind === 'pr' || kind === 'plan' ? which('mmdc') : '';
 if (mmdc) {
   // Lines after a ```mermaid fence up to the next fence, CRs removed.
   // A repeated ```mermaid line restarts nothing; it is skipped.

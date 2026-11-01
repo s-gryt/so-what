@@ -165,6 +165,8 @@ write(cat(prun, 'b', 'c9-proto-contract', 'r1', 'out.txt'), 'Title\n\nImpact: x.
 const lintlog = cat(work, 'lintlog');
 node('score.mjs', [prun], { LINT_LOG: lintlog });
 check('score-invariant', 'yes', fs.existsSync(lintlog) && fs.readFileSync(lintlog, 'utf8').includes('--invariant|proto field numbers are never reused|') ? 'yes' : 'no');
+write(cat(sk, 'scripts', 'lint.mjs'), "console.log('output: impact map: broken');\nconsole.log('output: missing field');\nprocess.exitCode = 1;\n");
+check('score-counts-errors', 'fail(1)\tinvalid', node('score.mjs', [prun]).out.split('\n')[1].split('\t').slice(3, 5).join('\t'));
 
 // layout: legacy r1, multiple runs, and sd across runs
 const run = cat(work, 'run');

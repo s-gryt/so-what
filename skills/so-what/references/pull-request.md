@@ -1,7 +1,8 @@
 # Pull request recap block
 
-The title follows the commit subject rules. The body is this block plus any
-footer the harness requires. `upsert-pr.mjs` swaps only the block.
+The title follows the [title rules](../SKILL.md#titles). The body is
+this block plus any footer the harness requires. `upsert-pr.mjs` swaps
+only the block.
 
 The reader sees `Impact` and `Impact map`; everything else folds into one
 `<details>`.
@@ -18,6 +19,7 @@ in behavior, in plain words. No file names, no edit-verb openers.>
 
 Worst case: <what could go wrong, 20 words max>
 Decision: <what the reviewer must decide before merge, 25 words max>
+Review focus: <size: large only; where to read first>
 
 ## Impact map
 
@@ -42,6 +44,7 @@ after:  [<who>] --> [<step>] --> (<outcome>)
 <What could break, for whom, and what would reveal it.>
 
 Rollback: <revert | revert + <extra step> | irreversible: <what is lost>>
+Compatibility: <only when stored data, output, or measured values change>
 
 ## Changes
 
@@ -49,8 +52,8 @@ Rollback: <revert | revert + <extra step> | irreversible: <what is lost>>
 
 ## Verification
 
-- <check that ran, and its result>
-- Not verified: <what did not run>. owner: <who runs it before merge>
+- <check that ran, its result, and its evidence: command, run link, or log>
+- Not verified: <what did not run>. owner: <who>, <when>, <issue link>
 
 </details>
 <!-- so-what:end -->
@@ -66,24 +69,33 @@ Rollback: <revert | revert + <extra step> | irreversible: <what is lost>>
 - `Worst case:` sits directly before `Decision:` and is required at
   medium and high risk. `Decision:` is required there too, and never
   starts with "none" at high risk. Neither counts toward Impact's words.
+- `Review focus:` follows `Decision:` when `facts.mjs` prints `size:
+  large`. It names the 1-3 places a reviewer reads first. File names are
+  allowed there. Lint fails when it comes before `Decision:`.
 - Labels may be bold (`**Decision:**`). A field continues on indented lines
   and ends at the next unindented line.
-- The map is required at medium and high risk. Default to an ASCII map in
-  a `text` fence. A `mermaid` fence is an option; see
+- The map is required at medium and high risk. Rules:
   [impact map](impact-map.md).
 - Risk is at least the floor from `facts.mjs`. The table must have the
   literal header `Area | Risk` and one row per area, in plain words ("CI
-  checks"), merging rows only when they share a consequence.
+  checks"), merging rows only when they share a consequence. Each cell
+  holds one consequence; split a list of rules into rows.
+- `Compatibility:` in Risk says whether earlier results stay comparable,
+  and whether data written after merge stays readable after a revert.
+  Repeat it in each later PR that builds on the same change.
 - `Rollback:` in Risk is required at high risk, case-insensitive.
 - Name each touched invariant in Risk, with what the change does to it;
   pass each to lint with `--invariant "<name>"`.
 - `Verification` lists what ran, with at least one `- ` item. At high risk
   each "not verified" names `owner:`.
+- When a "not verified" check runs, upsert the block with its result. A
+  merged PR then records what was proved, and when.
 - `Before / after` covers interface, schema, command, or config shape
   changes. `Changes` groups by intent and never restates Impact or Risk.
 - Omit empty optional sections. Each fact appears once.
-- Budget: aim for 120 words, hard limit 200. Headings, label lines, and the
-  `Impact` text count; tables, fenced diagrams, and HTML tag lines do not.
+- Budget: aim for 120 words, hard limit 200. Headings, label lines, and
+  the `Impact` text count. Tables, fenced diagrams, and HTML tag lines do
+  not count.
 
 ## Example
 

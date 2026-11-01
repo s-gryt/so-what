@@ -255,6 +255,10 @@ if (touched.size > 0 && rank(top) < 2) { top = 'medium'; topArea = 'invariants';
 let report = '';
 report += `files: ${lines.length}  +${totalAdded} -${totalRemoved}\n`;
 report += `risk: ${top} (driven by ${topArea})\n`;
+// A large change is hard to review and to revert in one piece.
+if (lines.length > 10 || totalAdded + totalRemoved > 300) {
+  report += `size: large (${lines.length} files, ${totalAdded + totalRemoved} lines); split by concern, or add 'Review focus:' and say what moved\n`;
+}
 report += 'areas:\n';
 for (let level = 3; level >= 1; level--) {
   for (const area of order) {

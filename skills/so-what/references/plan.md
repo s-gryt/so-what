@@ -8,7 +8,8 @@ so `facts.mjs` gives no floor: pass the level from `## Risk: <level>`.
 - Required, in order: `## Plan` (20-70 words; the first sentence, 30 words
   max, names who will notice what), `## Risk: <level>` (expected level),
   and `## Verification plan` (at least one `- ` item).
-- Optional: `## Impact map` directly after `Plan`, ASCII only.
+- Optional: `## Impact map` directly after `Plan`. Rules:
+  [impact map](impact-map.md).
 - No `<details>`, `Decision:`, or `Worst case:` needed; the block is short
   and fully visible.
 - To recap a PR whose body holds a plan (`upsert-pr.mjs <n> --show`; first

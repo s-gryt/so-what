@@ -17,7 +17,9 @@ The title or subject, the first sentence of Impact, `Worst case:`,
 linting, read back only that view and answer each question in one line. If
 an answer needs the rest of the text, rewrite.
 
-1. What was wrong, and what is different for whom?
+1. What was wrong, and what is different for whom? The answer names
+   every behavior the diff changes and every audience it reaches. A
+   second consequence goes in the second Impact sentence and in the map.
 2. What is the worst case?
 3. What must the reader decide?
 
@@ -28,6 +30,33 @@ No: diff narration; cut it. The first Impact sentence names the problem solved o
 audience, in plain words. No edit-verb opener (updated, added, removed),
 no file names, no internal jargon or CI step names a non-specialist cannot
 parse. Open with what was broken, blocked, or exposed, and for whom; then what is different now.
+Define or link each project term (a milestone, a test case ID, an
+internal name) on first use. The text must stand alone.
+
+## Size limits
+
+Word, line, and column counts in this skill are limits. `lint.mjs` fails
+text above one. Cut a line that carries no impact, risk, decision, or
+proof. Keep every changed behavior; shorten the words around it.
+
+## Titles
+
+A commit subject and a PR title follow one rule: `<type>(<scope>):
+<outcome>`, imperative, 72 characters max, no period. The title covers the
+whole change and names its largest behavior change.
+
+- Pick the type from the real behavior change. `fix` repairs broken
+  behavior. `feat` adds behavior or output. `refactor` keeps every output
+  the same. `docs` touches docs only. Others: `ci`, `build`, `chore`,
+  `perf`, `test`, `style`, `revert`.
+- A mixed change takes the type of its largest behavior change.
+- `chore` and `refactor` change nothing a user, client, or operator
+  sees. Deleted data, a removed field, or a changed default is a
+  behavior change.
+- A change that breaks a caller or loses data adds `!` after the scope:
+  `feat(api)!: ...`.
+- `scope` is the area from `facts.mjs` or a narrower name.
+- Lint each PR title with `lint.mjs subject <title-file>`.
 
 ## Say what is true now
 
@@ -60,6 +89,10 @@ invariant raises it to medium. Repos override with `.so-what/areas.tsv` /
 risk higher than the floor when the diff justifies it; never lower. Read
 the real diff; `--no-log` hides subjects.
 
+`facts.mjs` prints `size: large` above 10 files or 300 changed lines.
+Split the change by concern when you can. Otherwise a PR adds `Review
+focus:` and a commit adds a body paragraph that says what moved where.
+
 ## Risk levels change the text
 
 - Medium or high: add the impact map, the worst case, and a decision line.
@@ -68,9 +101,12 @@ the real diff; `--no-log` hides subjects.
 - High: add `Rollback:` (`revert`, `revert + <extra step>`, or
   `irreversible: <what is lost>`).
 - Any level: name each touched invariant in Risk.
-- Maps: ASCII is the default for commits and PRs. A PR may use a `mermaid`
-  `flowchart LR` as an option; commits take ASCII only.
-  Rules: [impact map](references/impact-map.md).
+- Changed stored data, output format, or measured values: add
+  `Compatibility:` to Risk. Say if earlier results stay comparable, and
+  if data written after merge stays readable after a revert. Lint does
+  not check this line.
+- Maps: one logic, two formats. ASCII is the default; `mermaid` is a
+  preference for PRs and plans. Rules: [impact map](references/impact-map.md).
 
 ## Never invent the why
 
@@ -86,6 +122,10 @@ and name the check. At medium or high risk a health check, smoke
 test, lint, or "it compiles" is not proof; proof exercises the changed
 behavior. At high risk every `not verified` names `owner:`, who runs it
 before merge.
+
+Each check that ran points to its evidence: the command, a CI run link,
+or a log. Each `not verified` item says when it runs (before merge, or a
+named later step) and links its tracking issue when one exists.
 
 ## Creating a commit
 
@@ -113,6 +153,12 @@ before merge.
    <floor> --invariant "<name>"`. `--risk` is required. It lints, then
    replaces only the marked block. `--dry-run` previews.
 6. After a behavior-changing push, regenerate and upsert again.
+7. After a `not verified` check runs, upsert again with its result. A
+   `Decision:` that asks for a check before merge stays open until
+   Verification shows that result.
+
+The repo's own rules add to this shape. Follow its contributing guide,
+agent instructions, and templates for issue IDs, labels, and trailers.
 
 One worked example for every stage: [example](references/example.md).
 Before code exists, see [plan mode](references/plan.md). Lint failures and

@@ -120,10 +120,9 @@ Rollback: revert + delete the Salesforce records the sync created
 
 ## Mermaid option
 
-ASCII is the default map. A pull request can draw the same map in mermaid,
-which GitHub renders on the PR page. To use it, replace the `text` fence
-under `## Impact map` with this fence. Rules: [impact map](impact-map.md).
-
+The same map in mermaid, for a user who prefers it. Replace the `text`
+fence under `## Impact map` with this fence. Rules:
+[impact map](impact-map.md).
 
 ```mermaid
 flowchart LR

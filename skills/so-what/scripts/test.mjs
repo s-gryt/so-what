@@ -249,6 +249,10 @@ expect('fail', 'commit-risk-below-facts', lint('commit', W('commit-underrated'),
 expect('fail', 'commit-why-before-impact', lint('commit', W('commit-why-first')));
 expect('fail', 'subject-not-conventional', lint('subject', W('subject-bad')));
 expect('pass', 'subject-conventional', lint('subject', W('subject-good')));
+write('subject-72', `docs(guide): ${repeat('x', 59)}\n`);
+write('subject-73', `docs(guide): ${repeat('x', 60)}\n`);
+expect('pass', 'subject-at-72-bytes', lint('subject', W('subject-72')));
+expect('fail', 'subject-over-72-bytes', lint('subject', W('subject-73')));
 {
   const filler = repeat('Reviewers notice one more consequence here. ', 60);
   transform('pr-good', 'pr-too-long', (l) => (/^## Why/.test(l) ? [filler, '', l] : l));
@@ -341,8 +345,9 @@ expect('fail', 'pr-map-must-follow-impact', lint('pr', W('pr-map-misplaced'), '-
 
 // brevity limits
 {
-  const longSentence = repeat('word ', 35);
-  write('commit-impact-too-long', `docs(guide): restore the validation guide link\n\nImpact: Readers following the index reach the page. ${longSentence}\n`);
+  // Wrapped at 72 so only the word count breaks its limit.
+  const longSentence = Array.from({ length: 6 }, () => repeat('word ', 7)).join('\n  ');
+  write('commit-impact-too-long', `docs(guide): restore the validation guide link\n\nImpact: Readers following the index reach the page.\n  ${longSentence}\n`);
   write('commit-lead-too-long', `docs(guide): restore the validation guide link\n\nImpact: ${longSentence}.\n`);
 }
 expect('fail', 'commit-impact-over-45-words', lint('commit', W('commit-impact-too-long')));
@@ -392,6 +397,16 @@ fs.writeFileSync(path.join(repo, 'notes.md'), 'draft\n');
 git(repo, 'add', 'notes.md');
 write('facts-staged', factsInRepo('--staged').stdout);
 expect('pass', 'facts-staged-rates-docs-low', hasMatch(W('facts-staged'), /^risk: low \(driven by docs\)/));
+expect('fail', 'facts-small-change-has-no-size-line', hasMatch(W('facts-staged'), /^size: /));
+{
+  const big = W('repo-large');
+  gitInit(big);
+  git(big, 'commit', '-q', '--allow-empty', '-m', 'base');
+  for (let n = 1; n <= 11; n++) fs.writeFileSync(path.join(big, `note${n}.md`), 'draft\n');
+  git(big, 'add', '.');
+  write('facts-large', node('facts.mjs', ['--staged'], { cwd: big }).stdout);
+}
+expect('pass', 'facts-flags-large-change', hasMatch(W('facts-large'), /^size: large \(11 files, 11 lines\)/));
 
 write('commit-risk-before-why', `fix(docs): restore the validation guide link
 
@@ -507,6 +522,14 @@ expect('pass', 'pr-decision-present-at-medium', lint('pr', W('pr-good'), '--risk
 expect('fail', 'pr-decision-required-at-medium', lint('pr', W('pr-no-decision'), '--risk', 'medium'));
 expect('fail', 'pr-decision-required-by-declared-level', lint('pr', W('pr-no-decision')));
 expect('pass', 'pr-decision-optional-at-low', lint('pr', W('pr-low-no-decision'), '--risk', 'low'));
+
+// review focus line
+transform('pr-good', 'pr-review-focus', (l) => (/^Decision:/.test(l) ? [l, 'Review focus: the guard in check.yml, then store.go.'] : l));
+transform('pr-good', 'pr-review-focus-empty', (l) => (/^Decision:/.test(l) ? [l, 'Review focus:'] : l));
+expect('pass', 'pr-review-focus-may-name-files', lint('pr', W('pr-review-focus'), '--risk', 'medium'));
+expect('fail', 'pr-review-focus-empty', lint('pr', W('pr-review-focus-empty'), '--risk', 'medium'));
+transform('pr-good', 'pr-review-focus-first', (l) => (/^Worst case:/.test(l) ? ['Review focus: the guard in check.yml.', l] : l));
+expect('fail', 'pr-review-focus-before-decision', lint('pr', W('pr-review-focus-first'), '--risk', 'medium'));
 expect('fail', 'pr-decision-over-25-words', lint('pr', W('pr-decision-26-words'), '--risk', 'medium'));
 expect('pass', 'pr-decision-at-25-words', lint('pr', W('pr-decision-25-words'), '--risk', 'medium'));
 expect('fail', 'pr-decision-empty', lint('pr', W('pr-decision-empty'), '--risk', 'medium'));
@@ -791,7 +814,7 @@ expect('fail', 'upsert-passes-invariant-to-lint', () => upsertWithBody(W('body-p
 expect('pass', 'upsert-invariant-satisfied', () => upsertWithBody(W('body-plain'), '7', W('pr-good'), '--risk', 'medium', '--invariant', 'agent instructions', '--dry-run'));
 expect('fail', 'upsert-requires-risk', () => upsertWithBody(W('body-plain'), '7', W('pr-good'), '--dry-run'));
 
-// mermaid impact maps (pull requests only)
+// mermaid impact maps (pull requests and plans)
 function prWithMap(name, fence, map) {
   let skip = false;
   transform('pr-good', name, (l) => {
@@ -848,7 +871,7 @@ expect('fail', 'pr-mermaid-over-15-lines', lint('pr', W('pr-mermaid-too-long'), 
 expect('pass', 'pr-mermaid-at-15-lines', lint('pr', W('pr-mermaid-fifteen-lines'), '--risk', 'medium'));
 transform('plan-good', 'plan-mermaid', (l) => (/^## Risk/.test(l)
   ? ['## Impact map', '', '```mermaid', 'flowchart LR', '    A[Contributor] --> B[docs run]', '```', '', l] : l));
-expect('fail', 'plan-mermaid-rejected', lint('plan', W('plan-mermaid')));
+expect('pass', 'plan-mermaid-accepted', lint('plan', W('plan-mermaid')));
 write('commit-mermaid', 'ci(trigger): run docs checks only on pull requests\n\nImpact: Contributors get one docs run per pull request, not two.\nWhy: Pushes ran the gate twice.\nRisk: high - trigger change; verified with a draft PR.\nRollback: revert\n\n```mermaid\nflowchart LR\n    A[Contributor] --> B[docs run]\n```\n');
 expect('fail', 'commit-mermaid-rejected', lint('commit', W('commit-mermaid'), '--risk', 'high'));
 
