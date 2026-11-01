@@ -4,6 +4,7 @@ on:
     branches: [main]
   push:
     branches: [main]
+  workflow_dispatch:
 jobs:
   scripts:
     strategy:
@@ -21,7 +22,7 @@ jobs:
       - run: node skills/so-what/evals/selftest.mjs
   release:
     needs: scripts
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     concurrency: release
     permissions:
