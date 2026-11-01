@@ -19,3 +19,30 @@ jobs:
           node-version: ${{ matrix.node }}
       - run: node skills/so-what/scripts/test.mjs
       - run: node skills/so-what/evals/selftest.mjs
+  release:
+    needs: scripts
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    concurrency: release
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+      - run: >-
+          npx --yes
+          -p semantic-release@25
+          -p @semantic-release/changelog@7
+          -p @semantic-release/exec@7
+          -p @semantic-release/git@11
+          -p conventional-changelog-conventionalcommits@10
+          semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
